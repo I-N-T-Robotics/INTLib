@@ -10,10 +10,13 @@
 
 
 // Custom definitions may go here
-
+plugins {
+    id 'maven-publish'
+}
 // Include common definitions from above.
 apply from: '../build.common.gradle'
 apply from: '../build.dependencies.gradle'
+
 
 android {
     namespace = 'org.firstinspires.ftc.teamcode'
@@ -26,3 +29,30 @@ android {
 dependencies {
     implementation project(':FtcRobotController')
 }
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.findByName("release") // use 'release' if it's an Android project
+
+            groupId = 'com.github.I-N-T-Robotics'
+            artifactId = 'INTLib'
+            version = '1.0.0'
+
+            }
+        }
+    }
+    repositories {
+        maven {
+            name = "GitHubPackages"
+            url = uri("https://maven.pkg.github.com/I-N-T-Robotics/INTLib")
+            credentials {
+                username = project.findProperty("gpr.user") ?: System.getenv("USERNAME")
+                password = project.findProperty("gpr.token") ?: System.getenv("GITHUB_TOKEN")
+            }
+        }
+    }
+
+
+
+
