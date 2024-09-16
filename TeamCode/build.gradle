@@ -24,24 +24,57 @@ android {
     packagingOptions {
         jniLibs.useLegacyPackaging true
     }
+
+    publishing {
+        singleVariant('release') {
+            withSourcesJar()
+            withJavadocJar()
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
 }
 
 dependencies {
     implementation project(':FtcRobotController')
 }
 
-publishing {
-    publications {
-        mavenJava(MavenPublication) {
-            from components.findByName("release") // use 'release' if it's an Android project
 
+/*publishing {
+    publications {
+        release(MavenPublication) {
             groupId = 'com.github.I-N-T-Robotics'
             artifactId = 'INTLib'
             version = '1.0.0'
 
+            afterEvaluate {
+                from components.findByName("release")
             }
         }
     }
+} */
+
+afterEvaluate {
+    publishing {
+        publications {
+            // Creates a Maven publication called "release".
+            release(MavenPublication) {
+                // Applies the component for the release build variant.
+                components.getByName('release')
+
+                // You can then customize attributes of the publication as shown below.
+                groupId = 'com.github.I-N-T-Robotics'
+                artifactId = 'INTLib'
+                version = '1.0.0'
+            }
+        }
+    }
+}
     repositories {
         maven {
             name = "GitHubPackages"
